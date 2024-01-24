@@ -9,5 +9,5 @@ export default {
     dir: 'dist',
     format: 'cjs',
   },
-  plugins: [nodeResolve(), commonjs(), json()] //TODO , terser()]
+  plugins: [nodeResolve(), commonjs(), json(), terser()]
 };
