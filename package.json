@@ -4,22 +4,24 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "build": "rollup --config"
+    "build": "rollup --config",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@actions/core": "^1.10.0",
-    "@actions/github": "^5.1.1",
-    "@octokit/auth-app": "^4.0.7",
-    "https-proxy-agent": "^5.0.1"
+    "@actions/core": "^1.10.1",
+    "@actions/github": "^6.0.0",
+    "@octokit/auth-app": "^6.0.3",
+    "https-proxy-agent": "^7.0.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.9.6"
+    "rollup": "^4.9.6",
+    "husky": "^8.0.0"
   }
 }
