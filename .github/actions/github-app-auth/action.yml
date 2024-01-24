@@ -1,0 +1,15 @@
+name: "Use GitHub App Auth"
+description: "Authenticates as GitHub App"
+inputs:
+  app-id:
+    description: App id to authenticate with a GitHub app
+    required: true
+  private-key:
+    description: App private key to authenticate with a GitHub app
+    required: true
+runs:
+  using: "node20"
+  main: "dist/index.js"
+branding:
+  icon: 'download-cloud'
+  color: 'yellow'
