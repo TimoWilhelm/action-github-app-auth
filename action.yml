@@ -8,8 +8,18 @@ inputs:
     description: App private key to authenticate with a GitHub app
     required: true
   installation-id:
-    description: Installation ID of the GitHub app in an organization or account
+    description: Installation ID of the GitHub app in an organization or account. Required if multiple installations exist.
     required: false
+  set-git-credentials:
+    description: Configures git credentials for GitHub URLs if set to "true"
+    required: false
+    default: 'false'
+    options:
+      - true
+      - false
+outputs:
+  token:
+    description: Access Token for the GitHub App installation
 runs:
   using: "node20"
   main: "dist/index.js"

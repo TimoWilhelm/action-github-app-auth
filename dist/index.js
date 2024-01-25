@@ -33888,20 +33888,21 @@ const run = async () => {
     },
   });
 
-  const privateKeyPkcs8 = node_crypto.createPrivateKey(privateKeyInput).export({
+  // Only PKCS#8 is supported - https://github.com/gr2m/universal-github-app-jwt#readme
+  const privateKey = node_crypto.createPrivateKey(privateKeyInput).export({
     type: 'pkcs8',
     format: 'pem',
   });
 
   const installationId =
-    coreExports.getInput('installation-id') ||
-    (await findInstallationId(appId, privateKeyPkcs8, customRequest));
+    coreExports.getInput('installation-id') || (await findInstallationId(appId, privateKey, customRequest));
 
+  coreExports.setOutput('installation-id', installationId);
   coreExports.info(`Installation ID: ${installationId}`);
 
   const installationAuth = distNode.createAppAuth({
     appId,
-    privateKey: privateKeyPkcs8,
+    privateKey,
     installationId,
     request: customRequest,
   });
@@ -33915,8 +33916,17 @@ const run = async () => {
     coreExports.setFailed('Failed to acquire installation token');
   }
 
+  coreExports.setSecret(token);
+  coreExports.setOutput('token', token);
+
+  if (coreExports.getInput('set-git-credentials') !== 'true') {
+    coreExports.info('Skipping git credential configuration');
+    return;
+  }
   const command = `git config --global url."https://x-access-token:${token}@github.com/".insteadOf "https://github.com/"`;
   child_process.execSync(command);
+
+  coreExports.info('Git credentials configured successfully');
 };
 
 run();

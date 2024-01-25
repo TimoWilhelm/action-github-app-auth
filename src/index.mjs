@@ -2,7 +2,7 @@
 
 import { createPrivateKey } from 'node:crypto';
 import { execSync } from 'child_process';
-import { info, setFailed, getInput } from '@actions/core';
+import { info, setFailed, getInput, setOutput, setSecret } from '@actions/core';
 import { getOctokit } from '@actions/github';
 import { request } from '@octokit/request';
 
@@ -64,20 +64,21 @@ const run = async () => {
     },
   });
 
-  const privateKeyPkcs8 = createPrivateKey(privateKeyInput).export({
+  // Only PKCS#8 is supported - https://github.com/gr2m/universal-github-app-jwt#readme
+  const privateKey = createPrivateKey(privateKeyInput).export({
     type: 'pkcs8',
     format: 'pem',
   });
 
   const installationId =
-    getInput('installation-id') ||
-    (await findInstallationId(appId, privateKeyPkcs8, customRequest));
+    getInput('installation-id') || (await findInstallationId(appId, privateKey, customRequest));
 
+  setOutput('installation-id', installationId);
   info(`Installation ID: ${installationId}`);
 
   const installationAuth = createAppAuth({
     appId,
-    privateKey: privateKeyPkcs8,
+    privateKey,
     installationId,
     request: customRequest,
   });
@@ -91,8 +92,17 @@ const run = async () => {
     setFailed('Failed to acquire installation token');
   }
 
+  setSecret(token);
+  setOutput('token', token);
+
+  if (getInput('set-git-credentials') !== 'true') {
+    info('Skipping git credential configuration');
+    return;
+  }
   const command = `git config --global url."https://x-access-token:${token}@github.com/".insteadOf "https://github.com/"`;
   execSync(command);
+
+  info('Git credentials configured successfully');
 };
 
 run();
