@@ -7,9 +7,12 @@ inputs:
   private-key:
     description: App private key to authenticate with a GitHub app
     required: true
+  installation-id:
+    description: Installation ID of the GitHub app in an organization or account
+    required: false
 runs:
   using: "node20"
   main: "dist/index.js"
 branding:
   icon: 'download-cloud'
-  color: 'yellow'
+  color: 'blue'
