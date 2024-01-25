@@ -93,7 +93,7 @@ const run = async () => {
   }
 
   setSecret(token);
-  setOutput('token', token);
+  setOutput('access-token', token);
 
   if (getInput('set-git-credentials') !== 'true') {
     info('Skipping git credential configuration');

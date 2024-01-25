@@ -33917,7 +33917,7 @@ const run = async () => {
   }
 
   coreExports.setSecret(token);
-  coreExports.setOutput('token', token);
+  coreExports.setOutput('access-token', token);
 
   if (coreExports.getInput('set-git-credentials') !== 'true') {
     coreExports.info('Skipping git credential configuration');
