@@ -16,4 +16,6 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           set-git-credentials: true
       - run: |
+          git config --global --list
+      - run: |
           git clone https://github.com/TimoWilhelm/private-test-repo
