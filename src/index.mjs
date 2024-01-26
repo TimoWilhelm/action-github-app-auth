@@ -22,7 +22,7 @@ function getHttpsProxyAgent() {
  * @param {string} appId - ID of the GitHub App.
  * @param {string} privateKey - Private key of the GitHub App.
  * @param {import('@octokit/types').RequestInterface<object> | undefined} request - A custom request object used for API calls.
- * @returns {Promise<number>} - The installation ID.
+ * @returns {Promise<number> | undefined} - The installation ID.
  */
 async function findInstallationId(appId, privateKey, request) {
   const auth = createAppAuth({
@@ -33,21 +33,20 @@ async function findInstallationId(appId, privateKey, request) {
 
   const appAuthentication = await auth({ type: 'app' });
   const jwt = appAuthentication.token;
-  if (!jwt) {
-    setFailed('Failed to acquire JWT');
-  }
 
-  const octokit = getOctokit(jwt);
+  const octokit = getOctokit(appAuthentication.token);
   const installations = await octokit.rest.apps.listInstallations();
 
   if (installations.data.length === 0) {
     setFailed('No installations found');
+    return;
   }
 
   if (installations.data.length > 1) {
     setFailed(
       `Detected ${installations.data.length} installations. Please provide an 'installation-id' input.`,
     );
+    return;
   }
 
   const { id } = installations.data[0];
@@ -73,6 +72,12 @@ const run = async () => {
   const installationId =
     getInput('installation-id') || (await findInstallationId(appId, privateKey, customRequest));
 
+  if (!installationId) {
+    setFailed('Failed to acquire installation ID');
+    return;
+  }
+
+
   setOutput('installation-id', installationId);
   info(`Installation ID: ${installationId}`);
 
@@ -88,8 +93,10 @@ const run = async () => {
   });
 
   const token = installationAuthentication.token;
+
   if (!token) {
     setFailed('Failed to acquire installation token');
+    return;
   }
 
   setSecret(token);
