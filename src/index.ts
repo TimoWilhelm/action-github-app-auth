@@ -1,5 +1,3 @@
-// @ts-check
-
 import { createPrivateKey } from 'node:crypto';
 import { execSync } from 'child_process';
 import { info, setFailed, getInput, setOutput, setSecret } from '@actions/core';
@@ -8,6 +6,7 @@ import { request } from '@octokit/request';
 
 import { createAppAuth } from '@octokit/auth-app';
 import { HttpsProxyAgent } from 'https-proxy-agent';
+import type { RequestInterface } from '@octokit/types';
 
 function getHttpsProxyAgent() {
   const proxy = process.env['HTTPS_PROXY'] || process.env['https_proxy'];
@@ -17,14 +16,11 @@ function getHttpsProxyAgent() {
   return new HttpsProxyAgent(proxy);
 }
 
-/**
- * Retrieves the installation ID for a GitHub App if it only has one installation.
- * @param {string} appId - ID of the GitHub App.
- * @param {string} privateKey - Private key of the GitHub App.
- * @param {import('@octokit/types').RequestInterface<object> | undefined} request - A custom request object used for API calls.
- * @returns {Promise<number> | undefined} - The installation ID.
- */
-async function findInstallationId(appId, privateKey, request) {
+async function findInstallationId(
+  appId: string,
+  privateKey: string,
+  request: RequestInterface<object>,
+) {
   const auth = createAppAuth({
     appId,
     privateKey,
@@ -32,21 +28,20 @@ async function findInstallationId(appId, privateKey, request) {
   });
 
   const appAuthentication = await auth({ type: 'app' });
-  const jwt = appAuthentication.token;
 
   const octokit = getOctokit(appAuthentication.token);
   const installations = await octokit.rest.apps.listInstallations();
 
   if (installations.data.length === 0) {
     setFailed('No installations found');
-    return;
+    return null;
   }
 
   if (installations.data.length > 1) {
     setFailed(
       `Detected ${installations.data.length} installations. Please provide an 'installation-id' input.`,
     );
-    return;
+    return null;
   }
 
   const { id } = installations.data[0];
@@ -67,7 +62,7 @@ const run = async () => {
   const privateKey = createPrivateKey(privateKeyInput).export({
     type: 'pkcs8',
     format: 'pem',
-  });
+  }).toString();
 
   const installationId =
     getInput('installation-id') || (await findInstallationId(appId, privateKey, customRequest));
@@ -76,7 +71,6 @@ const run = async () => {
     setFailed('Failed to acquire installation ID');
     return;
   }
-
 
   setOutput('installation-id', installationId);
   info(`Installation ID: ${installationId}`);

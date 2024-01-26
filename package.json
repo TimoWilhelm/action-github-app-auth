@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "build": "rollup --config",
+    "build": "tsup --config tsup.config.ts",
     "prepare": "husky install"
   },
   "keywords": [],
@@ -17,10 +17,10 @@
     "https-proxy-agent": "^7.0.2"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^15.2.3",
+    "husky": "^8.0.0",
     "rollup": "^4.9.6",
-    "husky": "^8.0.0"
+    "tslib": "^2.6.2",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
   }
 }
