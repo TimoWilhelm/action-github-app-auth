@@ -1,14 +1,14 @@
-name: "Use GitHub App Auth"
-description: "Authenticates as GitHub App"
+name: "GitHub App Auth"
+description: "Authenticate as a GitHub App"
 inputs:
   app-id:
-    description: App id to authenticate with a GitHub app
+    description: App ID of the GitHub app
     required: true
   private-key:
-    description: App private key to authenticate with a GitHub app
+    description: Private key of the GitHub app
     required: true
   installation-id:
-    description: Installation ID of the GitHub app in an organization or account. Required if multiple installations exist.
+    description: Installation ID of the GitHub app in an organization or account. Only required if multiple installations exist.
     required: false
   set-git-credentials:
     description: Configures git credentials for GitHub URLs if set to "true"
