@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "build": "tsup --config tsup.config.ts",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "author": "Timo Wilhelm",
   "license": "MIT",
@@ -16,8 +16,7 @@
     "https-proxy-agent": "^7.0.2"
   },
   "devDependencies": {
-    "husky": "^8.0.0",
-    "rollup": "^4.9.6",
+    "husky": "^9.0.11",
     "tslib": "^2.6.2",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"

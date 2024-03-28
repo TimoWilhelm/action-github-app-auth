@@ -1,6 +1,14 @@
 import { createPrivateKey } from 'node:crypto';
 import { execSync } from 'child_process';
-import { info, setFailed, getInput, setOutput, setSecret, error } from '@actions/core';
+import {
+  info,
+  setFailed,
+  getInput,
+  getBooleanInput,
+  setOutput,
+  setSecret,
+  error,
+} from '@actions/core';
 import { getOctokit } from '@actions/github';
 import { request } from '@octokit/request';
 
@@ -49,7 +57,7 @@ async function findInstallationId(
   return id;
 }
 
-const run = async () => {
+async function run() {
   try {
     const appId = getInput('app-id');
     const privateKeyInput = getInput('private-key');
@@ -94,7 +102,7 @@ const run = async () => {
     setSecret(token);
     setOutput('access-token', token);
 
-    if (getInput('set-git-credentials') !== 'true') {
+    if (!getBooleanInput('set-git-credentials')) {
       info('Skipping git credential configuration');
       return;
     }
@@ -109,6 +117,6 @@ const run = async () => {
       setFailed('An unexpected error occurred');
     }
   }
-};
+}
 
 run();
